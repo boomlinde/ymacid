@@ -1,0 +1,50 @@
+ymacid.exe: ymacid.obj gfx.obj bp.obj kb.obj tc.obj fm.obj bs.obj ed.obj dp.obj ds.obj th.obj cfg.obj
+	tcc -oymacid.exe \
+		ymacid.obj \
+		gfx.obj \
+		bp.obj \
+		kb.obj \
+		tc.obj \
+		fm.obj \
+		bs.obj \
+		ed.obj \
+		dp.obj \
+		ds.obj \
+		th.obj \
+		cfg.obj \
+
+ymacid.obj: ymacid.c gfx.h types.h pattern.h
+	tcc -c ymacid.c
+
+gfx.obj: gfx.c gfx.h types.h
+	tcc -c gfx.c
+
+bp.obj: basspat.c basspat.h types.h pattern.h
+	tcc -obp.obj -c basspat.c
+
+kb.obj: keyboard.c keyboard.h types.h
+	tcc -okb.obj -c keyboard.c
+
+tc.obj: tick.c tick.h types.h
+	tcc -otc.obj -c tick.c
+
+fm.obj: fm.c fm.h types.h
+	tcc -c fm.c
+
+bs.obj: bass_seq.c bass_seq.h types.h
+	tcc -obs.obj -c bass_seq.c
+
+ed.obj: edit.c edit.h types.h
+	tcc -oed.obj -c edit.c
+
+dp.obj: drumpat.c drumpat.h types.h
+	tcc -odp.obj -c drumpat.c
+
+ds.obj: drum_seq.c drum_seq.h types.h
+	tcc -ods.obj -c drum_seq.c
+
+th.obj: theme.c theme.h types.h
+	tcc -oth.obj -c theme.c
+
+cfg.obj: cfg.c cfg.h types.h theme.h fm.h
+	tcc -ocfg.obj -c cfg.c
