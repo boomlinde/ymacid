@@ -16,7 +16,7 @@ void tick_settempo(u8 bpm)
 {
 	static u16 period;
 
-	period = PIT_RATE / (24 * bpm / 60);
+	period = 60 * PIT_RATE / (24 * bpm);
 	outportb(0x43, 0xb6);
 	outportb(0x42, period);
 	outportb(0x42, period >> 8);
