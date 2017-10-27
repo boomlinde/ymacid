@@ -22,6 +22,8 @@
 #define OUT(blk) return (((u16)(0.5+freq*BLOCK(blk))) | ((blk) << 10))
 
 u16 fm_port = 0x220;
+u8 fm_opl3 = 0;
+u8 fm_split = 0;
 
 static u16
 f2fnum(float freq)
@@ -70,9 +72,13 @@ midi2fnum(float note)
 	return f2fnum(8.17579891564*pow(1.0005777895065548, note*100.0));
 }
 
-static void fmwrite(u8 reg, u8 data)
+static void fmwrite(u16 reg, u8 data)
 {
 	static u8 i;
+	static u8 add;
+
+	add = reg & 0xff00 ? 2 : 0;
+	reg &= 0xff;
 
 	/*
 	 * On OPL2 you need to wait 3.3 us after writing an address.
@@ -80,21 +86,30 @@ static void fmwrite(u8 reg, u8 data)
 	 * take that long because a number of its cycles will have to
 	 * pass before being able to respond.
 	 */
-	outportb(fm_port, reg);
+	outportb(fm_port + add, reg);
 	for (i = 0; i < 6; i++) {
-		inportb(fm_port);
+		inportb(fm_port + add);
 	}
 
 	/* Wait 23 us after a register write */
-	outportb(fm_port+1, data);
+	outportb(fm_port+1 + add, data);
 	for (i = 0; i < 36; i++) {
-		inportb(fm_port);
+		inportb(fm_port + add);
 	}
 }
 
 static void fm_set(u8 reg, u8 ch, u8 op, u8 data)
 {
 	static u8 opi[9] = {0, 1, 2, 8, 9, 10, 16, 17, 18};
+	static u8 opi_opl3[18] = {0, 1, 2, 6, 7, 8, 12, 13, 14, 18, 19, 20, 24, 25, 26, 30, 31, 32};
+	static u16 op_offset[36] = {
+		0x000,0x001,0x002,0x003,0x004,0x005,
+		0x008,0x009,0x00A,0x00B,0x00C,0x00D,
+		0x010,0x011,0x012,0x013,0x014,0x015,
+		0x100,0x101,0x102,0x103,0x104,0x105,
+		0x108,0x109,0x10A,0x10B,0x10C,0x10D,
+		0x110,0x111,0x112,0x113,0x114,0x115
+	};
 
 	switch (reg) {
 	case CSW_NOTESEL:
@@ -107,7 +122,11 @@ static void fm_set(u8 reg, u8 ch, u8 op, u8 data)
 		fmwrite(reg + ch, data);
 		break;
 	default:
-		fmwrite(reg + opi[ch] + (op ? 3 : 0), data);
+		if (fm_opl3) {
+			fmwrite(reg + op_offset[opi_opl3[ch] + (op ? 3 : 0)], data);
+		} else {
+			fmwrite(reg + opi[ch] + (op ? 3 : 0), data);
+		}
 		break;
 	}
 }
@@ -142,10 +161,15 @@ void fm_init(void)
 	/* Zero out the whole chip */
 	for (i = 1; i < 0xf6; i++) {
 		fmwrite(i, 0);
+		fmwrite(0x100 + i, 0);
 	}
 
 	/* Enable non-sine waveforms */
 	fmwrite(0x01, 1 << 5);
+
+	if (fm_opl3) {
+		fmwrite(0x105, 1);
+	}
 } 
 
 static void op_flush(u8 op, struct fm_voice *s)
@@ -188,7 +212,7 @@ static void op_flush(u8 op, struct fm_voice *s)
 				| BIT(7, SET.tremolo));
 	}
 	if (CHANGED(waveform)) {
-		FMSET(WAVEFORM, SET.waveform & 0x3);
+		FMSET(WAVEFORM, SET.waveform & (fm_opl3 ? 0x7 : 0x3));
 	}
 
 	/* On accents, change ASDR to 88f8 and add the accent level */
@@ -221,8 +245,8 @@ void fm_flush(struct fm_voice *s)
 	op_flush(0, s);
 	op_flush(1, s);
 
-	if (CHANGED(feedback) || CHANGED(type)) {
-		FMSET(FB_TYPE, ((s->set.feedback & 7) << 1) | (s->set.type & 1));
+	if (CHANGED(feedback) || CHANGED(type) || CHANGED(chsettings)) {
+		FMSET(FB_TYPE, ((s->set.feedback & 7) << 1) | (s->set.type & 1) | (s->set.chsettings << 4));
 	}
 	if (CHANGED(pitch) || CHANGED(gate) || CHANGED(pitch_offset)) {
 		fnum = midi2fnum(s->set.pitch + s->set.pitch_offset);

@@ -75,18 +75,18 @@ void edit_drawsynth(struct fm_voice *fm, int key)
 
 	if (hlb == 0) hlb = MOD.level;
 
-	control('z', "ML", 0x3f, MOD.level);
-	control('x', "MD",  0xf, MOD.decay);
-	control('c', "MM",  0xf, MOD.multiplication);
-	control('v', "MW",  0x3, MOD.waveform);
-	control('b', "MS",  0xf, MOD.sustain);
-	control('n', "FB",  0x7, &fm->set.feedback);
+	control('z', "ML",            0x3f, MOD.level);
+	control('x', "MD",             0xf, MOD.decay);
+	control('c', "MM",             0xf, MOD.multiplication);
+	control('v', "MW", fm_opl3 ? 7 : 3, MOD.waveform);
+	control('b', "MS",             0xf, MOD.sustain);
+	control('n', "FB",             0x7, &fm->set.feedback);
 	linebreak();
-	control('Z', "CL", 0x3f, CAR.level);
-	control('X', "CD",  0xf, CAR.decay);
-	control('C', "CM",  0xf, CAR.multiplication);
-	control('V', "CW",  0x3, CAR.waveform);
-	control('B', "AL", 0x3f, MOD.accent_level);
+	control('Z', "CL",            0x3f, CAR.level);
+	control('X', "CD",             0xf, CAR.decay);
+	control('C', "CM",             0xf, CAR.multiplication);
+	control('V', "CW", fm_opl3 ? 7 : 3, CAR.waveform);
+	control('B', "AL",            0x3f, MOD.accent_level);
 #undef MOD
 #undef CAR
 }

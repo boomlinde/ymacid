@@ -27,6 +27,7 @@ struct fm_op {
 struct fm_ins {
 	struct fm_op ops[2];
 	u8 feedback;
+	u8 chsettings;
 	u8 type;
 	float pitch;
 	u8 gate;
@@ -65,5 +66,7 @@ void fm_initdrums(struct fm_drums *s);
 void fm_drumflush(struct fm_drums *d);
 
 extern u16 fm_port;
+extern u8 fm_opl3;
+extern u8 fm_split;
 
 #endif /* _FM_H_ */

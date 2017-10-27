@@ -7,6 +7,7 @@
 
 #include "fm.h"
 #include "theme.h"
+#include "tick.h"
 
 static int config_next(const char **p, char *out)
 {
@@ -34,13 +35,26 @@ static int config_read(const char *data)
 		if (NAME(theme)) {
 			NEXT(0);
 			if (!strcmp(buf, "acid")) {
-			  theme_cur = &theme_acid;
+				theme_cur = &theme_acid;
 			} else if (!strcmp(buf, "data")) {
-			  theme_cur = &theme_data;
+				theme_cur = &theme_data;
 			}
 		} else if (NAME(port)) {
 			NEXT(0);
 			fm_port = strtol(buf, 0, 0);
+		} else if (NAME(opl3)) {
+			NEXT(0);
+			fm_opl3 = strtol(buf, 0, 0);
+		} else if (NAME(clock)) {
+			NEXT(0);
+			if (!strcmp(buf, "pit")) {
+				tick_mode = TICK_PCSPKR;
+			} else if (!strcmp(buf, "int")) {
+				tick_mode = TICK_INT15H;
+			}
+		} else if (NAME(split)) {
+			NEXT(0);
+			fm_split = strtol(buf, 0, 0);
 		}
 	}
 #undef NAME

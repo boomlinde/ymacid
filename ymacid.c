@@ -66,10 +66,14 @@ int main(void)
 	keyboard_init();
 
 #ifdef KBTEST
-	printf("%d\n", sizeof (s));
 	for (;;) {
 		key = keyboard_poll();
-		if (key) printf("%04x\n", key);
+		if (key) {
+			printf("%04x\n", key);
+			if (key == 'q') {
+				return 0;
+			}
+		}
 	}
 #endif
 
@@ -134,6 +138,10 @@ int main(void)
 		s.drums.hh_sd.set.pitch_offset = 12;
 		s.drums.tt_cy.set.pitch_offset = 12;
 
+		s.drums.bd.set.chsettings = 0xf;
+		s.drums.hh_sd.set.chsettings = 0xf;
+		s.drums.tt_cy.set.chsettings = 0xf;
+
 		s.drums.bd.set.ops[0].attack = 0xf;
 		s.drums.bd.set.ops[1].attack = 0xf;
 		s.drums.hh_sd.set.ops[0].attack = 0xf;
@@ -170,6 +178,31 @@ int main(void)
 		s.drums.tt_cy.set.pitch = 45.0;
 	}
 
+	/* Limit waveforms if opl3 is not enabled */
+	if (!fm_opl3) {
+		s.bass.set.ops[0].waveform &= 3;
+		s.bass.set.ops[1].waveform &= 3;
+	}
+
+	if (fm_split) {
+		s.bass.set.chsettings = 0xa;
+		s.drums.bd.set.chsettings = 0x5;
+		s.drums.hh_sd.set.chsettings = 0x5;
+		s.drums.tt_cy.set.chsettings = 0x5;
+	} else {
+		s.bass.set.chsettings = 0xf;
+		s.drums.bd.set.chsettings = 0xf;
+		s.drums.hh_sd.set.chsettings = 0xf;
+		s.drums.tt_cy.set.chsettings = 0xf;
+	}
+
+	s.drums.accent = 0;
+	s.drums.bd.set.ops[0].att = 0;
+	s.drums.bd.set.ops[1].att = 0;
+	s.drums.hh_sd.set.ops[0].att = 0;
+	s.drums.hh_sd.set.ops[1].att = 0;
+	s.drums.tt_cy.set.ops[0].att = 0;
+	s.drums.tt_cy.set.ops[1].att = 0;
 	fm_drumflush(&s.drums);
 	fm_flush(&s.bass);
 	tick_settempo(s.tempo);
@@ -270,6 +303,8 @@ int main(void)
 
 	savestate(&s);
 	gfx_reset();
+
+	tick_exit();
 
 	return 0;
 }

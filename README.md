@@ -1,15 +1,15 @@
 YMACID
 ======
 
-An OPL2 software groovebox that is suited for live use. It draws inspiration
-from the Roland TB-303 and TR series and features two x0x-like sequencers, one
-for drums and one for bass or lead.
+An OPL2 software groovebox that is suited for live use. It draws
+inspiration from the Roland TB-303 and TR series and features two
+x0x-like sequencers, one for drums and one for bass or lead.
 
 Controls
 --------
 
-The controls have been optimized for a U.S. keyboard layout. It will suck
-on non-qwerty layouts in particular.
+The controls have been optimized for a U.S. keyboard layout. It will
+suck on non-qwerty layouts in particular.
 
     Common controls
     ---------------
@@ -126,36 +126,49 @@ Building
 
 Prerequisites:
 
-1. Unix-like operating system
-2. dosbox
-3. unix2dos
-4. Turbo C 2.01
-5. GNU make
+1.  Unix-like operating system
+2.  dosbox (in \$PATH)
+3.  unix2dos (in \$PATH)
+4.  Turbo C 2.01
+5.  GNU make (in \$PATH)
 
-Launch dosbox and install Turbo C in the `dos` directory. When you are done,
-the folder `dos/TC` should exist. Run GNU make in `$GITROOT`.
+Launch dosbox and install Turbo C in the `dos` directory. When you are
+done, the folder `dos/tc` should exist. Run GNU make in `$GITROOT`.
 
 `build/YMACID.EXE` should appear.
 
 Configuration
 -------------
 
-The program optionally uses a configuration file, YMACID.CFG. It consists
-of whitespace delineated key and value pairs. For now:
+The program optionally uses a configuration file, YMACID.CFG. It
+consists of whitespace delineated key and value pairs. For now:
 
-* port: the address of the OPL port
-* theme: the color theme to use, currently either "data" or "acid"
+-   port: the address of the OPL port
+-   theme: the color theme to use, currently either "data" or "acid"
+-   opl3: either 1 or 0. Enables OPL3 waveforms and optional splitting.
+-   split: eiter 1 or 0. When set to 1, drums will pass through one
+    channel and bass through the other
+-   clock: either "int" or "pit" for now. "pit" mode uses the PC speaker
+    timer as a clock source. This is very accurate, but does not work in
+    DOSBox. "int" mode uses interrupt 0x15, function 0x8300 to setup
+    delayed events at microsecond intervals. This works in DOSBox but is
+    less accurate. "int" accuracy may depend on the motherboard chipset.
 
 Example configuration:
 
     port 0x220
-	theme data
+    theme data
+    opl3 0
+    split 0
+    clock pit
 
-That is also the default configuration if there is no configuration file.
+That is also the default configuration if there is no configuration
+file.
 
 Compatibility notes
 -------------------
 
-The program may not run correctly in Windows 95 and will not run correctly in
-dosbox. It has been used successfully with Windows 98, and Windows 95 in DOS
-mode. It should work with an OPL2, but has only been tested with OPL3.
+The program may not run correctly in Windows 95 and will not run
+correctly in dosbox using the PIT clock. It has been used successfully
+with Windows 98, and Windows 95 in DOS mode. It should work with an
+OPL2, but has only been tested with OPL3 in OPL2 compatibility mode.
