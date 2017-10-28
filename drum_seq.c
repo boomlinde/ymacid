@@ -87,7 +87,7 @@ void dseq_tick(struct dseq_state *s)
 	}
 
 	s->tick++;
-	if (s->tick == 12) {
+	if (s->tick == 24) {
 		s->step++;
 		s->trig = 1;
 		s->tick = 0;

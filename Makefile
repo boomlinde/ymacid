@@ -27,5 +27,11 @@ build/ymacid.cfg: build ymacid.cfg
 build:
 	mkdir build
 
+ymacid.zip: build/$(bin) build/ymacid.cfg
+	mkdir -p ymacid
+	cp build/$(bin) build/ymacid.cfg ymacid/
+	zip -r ymacid.zip ymacid
+	rm -rf ymacid
+
 clean:
 	-rm -rf build

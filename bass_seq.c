@@ -2,6 +2,8 @@
 #include "fm.h"
 #include "basspat.h"
 
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 void bseq_init(
 		struct bseq_state *s,
 		struct fm_voice *v,
@@ -48,8 +50,8 @@ void bseq_tick(struct bseq_state *s)
 #define HASSLIDE(x) (HASFIELD(SLIDE, x) && ((x) & NOTE) != NOTE)
 #define GN basspat_getnote
 #define TUNE (40.0 + (float)*s->tune)
-#define S (*s->doshuffle ? *s->shuffle : 6)
-#define NS (*s->doshuffle ? S - 6 : 0)
+#define S (*s->doshuffle ? *s->shuffle : 12)
+#define NS (*s->doshuffle ? S - 12 : 0)
 
 	static u8 current_step;
 
@@ -63,7 +65,7 @@ void bseq_tick(struct bseq_state *s)
 		s->voice->set.gate = 1;
 		if (HASSLIDE(s->last_step)) {
 			s->voice->set.pitch = TUNE + GN(s->last_step);
-			s->slide_rate = (GN(current_step) - GN(s->last_step)) / 5.0;
+			s->slide_rate = (GN(current_step) - GN(s->last_step)) / 11.0;
 		} else {
 			s->voice->set.pitch = TUNE + GN(current_step);
 			s->voice->set.ops[0].accent = HASFIELD(ACCENT, current_step) != 0;
@@ -78,11 +80,11 @@ void bseq_tick(struct bseq_state *s)
 	}
 
 	s->tick++;
-	if (!HASSLIDE(current_step) && (s->tick == 10 - NS || s->tick == 4 + NS)) {
+	if (!HASSLIDE(current_step) && (s->tick == 6 - NS || s->tick == 18 + NS)) {
 		s->voice->set.gate = 0;
 	}
 
-	if (s->tick == 12) {
+	if (s->tick == 24) {
 		s->shuffled = 0;
 		s->trig = 1;
 		s->tick = 0;

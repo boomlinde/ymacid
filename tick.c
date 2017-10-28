@@ -4,7 +4,6 @@
 #include <stdio.h>
 
 static u8 laststate;
-static u8 count;
 static volatile u8 flag;
 static u8 tempo;
 static union REGS in;
@@ -21,7 +20,7 @@ static void settimer(void)
 
 	flagptr = &flag;
 
-	rate = (60 * 1000000L) / (tempo * 24);
+	rate = (60 * 1000000L) / (tempo * 48);
 
 	in.x.ax = 0x8301;
 	int86(0x15, &in, &out);
@@ -85,7 +84,7 @@ u8 tick(void)
 		state = inportb(0x61) & (1 << 5);
 		if (state && (laststate != state)) {
 			laststate = state;
-			return (count++ & 1) == 0;
+			return 1;
 		}
 
 		laststate = state;

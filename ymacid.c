@@ -106,7 +106,7 @@ int main(void)
 		}
 
 		s.tempo = 120;
-		s.shuffle = 6;
+		s.shuffle = 12;
 		s.doshuffle = 0;
 
 		fm_initvoice(&s.bass, 0);
@@ -219,7 +219,7 @@ int main(void)
 	drump_drawpatname(s.dpat);
 	drump_setmute(&s.mutes);
 	gfx_plotstrf(14, 1, "tempo:%d  ", theme_cur->drum_dc, s.tempo);
-	gfx_plotstrf(25, 1, "shuffle:%d  ", theme_cur->drum_dc, s.shuffle - 6);
+	gfx_plotstrf(25, 1, "shuffle:%d  ", theme_cur->drum_dc, s.shuffle - 12);
 	edit_drawdrums(&s.drums, 0);
 	setmode(s.mode);
 
@@ -231,7 +231,7 @@ int main(void)
 					ps = bseq.tick < s.shuffle && bseq.tick > (s.shuffle>>1);
 					ps |= bseq.tick >= s.shuffle + (s.shuffle>>1);
 				} else {
-					ps = bseq.tick % 6 > 2;
+					ps = bseq.tick % 12 > 4;
 				}
 				drawplaystep(5, 2,
 						(bseq.step<<1)+ps, theme_cur->bass_dc, bseq.playing);
@@ -276,7 +276,7 @@ int main(void)
 			edit_drawdrums(&s.drums, 0);
 			gfx_plotstrf(14, 1, "tempo:%d  ", theme_cur->drum_dc, s.tempo);
 			gfx_plotstrf(25, 1, "shuffle:%d  ",
-					theme_cur->drum_dc, s.shuffle-6);
+					theme_cur->drum_dc, s.shuffle-12);
 			if (s.doshuffle) gfx_plotstr(25, 2, "(both)", theme_cur->drum_dc);
 			else gfx_plotstr(25, 2, "      ", theme_cur->drum_dc);
 			break;
@@ -530,8 +530,8 @@ druminput(int key)
 		drump_editordraw(PAT);
 		break;
 
-	case '+': if (s.shuffle < 8) s.shuffle++; break;
-	case '_': if (s.shuffle > 6) s.shuffle--; break;
+	case '+': if (s.shuffle < 16) s.shuffle++; break;
+	case '_': if (s.shuffle > 12) s.shuffle--; break;
 	case '?': s.doshuffle = !s.doshuffle; break;
 	}
 #undef PAT
