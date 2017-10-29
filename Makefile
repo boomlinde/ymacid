@@ -30,6 +30,7 @@ build:
 ymacid.zip: build/$(bin) build/ymacid.cfg
 	mkdir -p ymacid
 	cp build/$(bin) build/ymacid.cfg ymacid/
+	unix2dos -n README.md ymacid/README.TXT
 	zip -r ymacid.zip ymacid
 	rm -rf ymacid
 

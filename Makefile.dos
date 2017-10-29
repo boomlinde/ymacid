@@ -1,4 +1,4 @@
-ymacid.exe: ymacid.obj gfx.obj bp.obj kb.obj tc.obj fm.obj bs.obj ed.obj dp.obj ds.obj th.obj cfg.obj
+ymacid.exe: ymacid.obj gfx.obj bp.obj kb.obj tc.obj fm.obj bs.obj ed.obj dp.obj ds.obj th.obj cfg.obj mi.obj
 	tcc -oymacid.exe \
 		ymacid.obj \
 		gfx.obj \
@@ -12,6 +12,7 @@ ymacid.exe: ymacid.obj gfx.obj bp.obj kb.obj tc.obj fm.obj bs.obj ed.obj dp.obj 
 		ds.obj \
 		th.obj \
 		cfg.obj \
+		mi.obj
 
 ymacid.obj: ymacid.c gfx.h types.h pattern.h
 	tcc -c ymacid.c
@@ -48,3 +49,6 @@ th.obj: theme.c theme.h types.h
 
 cfg.obj: cfg.c cfg.h types.h theme.h fm.h
 	tcc -ocfg.obj -c cfg.c
+
+mi.obj: midi.c midi.h types.h tick.h
+	tcc -omi.obj -c midi.c

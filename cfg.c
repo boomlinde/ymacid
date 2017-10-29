@@ -8,6 +8,7 @@
 #include "fm.h"
 #include "theme.h"
 #include "tick.h"
+#include "midi.h"
 
 static int config_next(const char **p, char *out)
 {
@@ -55,6 +56,9 @@ static int config_read(const char *data)
 		} else if (NAME(split)) {
 			NEXT(0);
 			fm_split = strtol(buf, 0, 0);
+		} else if (NAME(midi)) {
+			NEXT(0);
+			midi_port = strtol(buf, 0, 0);
 		}
 	}
 #undef NAME

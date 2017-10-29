@@ -15,6 +15,7 @@
 #include "drumpat.h"
 #include "theme.h"
 #include "cfg.h"
+#include "midi.h"
 
 #if 0
 #define KBTEST
@@ -88,6 +89,7 @@ int main(void)
 	gfx_init();
 	srand(time(0));
 	tick_init();
+	midi_init();
 	fm_init();
 	bseq_init(&bseq, &s.bass,
 			&s.baspat[s.bpat], &s.tune, &s.shuffle, &s.doshuffle);
@@ -225,6 +227,7 @@ int main(void)
 
 	while (!quit) {
 		if (tick()) {
+			midi_tick();
 			switch (s.mode) {
 			case BASS_MODE:
 				if (s.doshuffle) {
@@ -253,7 +256,11 @@ int main(void)
 		switch (key) {
 		case 0x11: quit = 1; break; /* ctrl+q */
 		case '\t': togglemode(); break;
-		case '\r': bseq_startstop(&bseq); dseq_startstop(&dseq); break;
+		case '\r':
+			bseq_startstop(&bseq);
+			dseq_startstop(&dseq);
+			midi_startstop();
+			break;
 		case 0x149: if (s.tempo < 200) tick_settempo(++s.tempo); break;
 		case 0x151: if (s.tempo >  30) tick_settempo(--s.tempo); break;
 		default:
@@ -301,6 +308,7 @@ int main(void)
 	s.drums.hh_sd.old.pitch = 128.0;
 	s.drums.tt_cy.old.pitch = 128.0;
 
+	midi_stop();
 	savestate(&s);
 	gfx_reset();
 
