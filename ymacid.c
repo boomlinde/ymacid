@@ -312,6 +312,11 @@ int main(void)
 	savestate(&s);
 	gfx_reset();
 
+	/* Reset to OPL2 compatibility mode */
+	if (fm_opl3) fm_opl3 = 0;
+
+	fm_init();
+
 	tick_exit();
 
 	return 0;

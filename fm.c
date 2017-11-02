@@ -169,6 +169,8 @@ void fm_init(void)
 
 	if (fm_opl3) {
 		fmwrite(0x105, 1);
+	} else {
+		fmwrite(0x105, 0);
 	}
 } 
 
