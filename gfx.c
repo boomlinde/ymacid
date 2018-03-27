@@ -10,9 +10,18 @@
 static int pageoffset;
 static char sprintfbuf[81];
 
+static u8 oldmode;
+static u8 oldpage;
+
 void
 gfx_init(void)
 {
+	/* Store old video mode and page */
+	_AH = 0xf;
+	geninterrupt(0x10);
+	oldmode = _AL;
+	oldpage = _BH;
+
 	/* Set 40*25 16 color text mode */
 	_AH = 0x0;
 	_AL = 0x1;
@@ -52,11 +61,11 @@ gfx_plot(int x, int y, u8 ch, u8 col)
 
 void gfx_reset(void)
 {
-	gfx_setpage(0);
+	gfx_setpage(oldpage);
 
-	/* Set normal text mode */
+	/* Set old mode */
 	_AH = 0x0;
-	_AL = 0x3;
+	_AL = oldmode;
 	geninterrupt(0x10);
 
 	/* Normal cursor */

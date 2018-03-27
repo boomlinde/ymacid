@@ -1,5 +1,0 @@
-#!/bin/bash
-
-sudo mount /dev/sdb /media/sd && \
-sudo cp build/YMACID.* /media/sd && \
-sudo umount /media/sd
