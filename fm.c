@@ -28,15 +28,15 @@ u8 fm_split = 0;
 static u16
 f2fnum(float freq)
 {
-    if (BLOCK(0)*freq < 1023.0) OUT(0);
-    if (BLOCK(1)*freq < 1023.0) OUT(1);
-    if (BLOCK(2)*freq < 1023.0) OUT(2);
-    if (BLOCK(2)*freq < 1023.0) OUT(2);
-    if (BLOCK(3)*freq < 1023.0) OUT(3);
-    if (BLOCK(4)*freq < 1023.0) OUT(4);
-    if (BLOCK(5)*freq < 1023.0) OUT(5);
-    if (BLOCK(6)*freq < 1023.0) OUT(6);
-    if (BLOCK(7)*freq < 1023.0) OUT(7);
+	if (BLOCK(0)*freq < 1023.0) OUT(0);
+	if (BLOCK(1)*freq < 1023.0) OUT(1);
+	if (BLOCK(2)*freq < 1023.0) OUT(2);
+	if (BLOCK(2)*freq < 1023.0) OUT(2);
+	if (BLOCK(3)*freq < 1023.0) OUT(3);
+	if (BLOCK(4)*freq < 1023.0) OUT(4);
+	if (BLOCK(5)*freq < 1023.0) OUT(5);
+	if (BLOCK(6)*freq < 1023.0) OUT(6);
+	if (BLOCK(7)*freq < 1023.0) OUT(7);
 	return 0x1fff;
 }
 
@@ -167,11 +167,8 @@ void fm_init(void)
 	/* Enable non-sine waveforms */
 	fmwrite(0x01, 1 << 5);
 
-	if (fm_opl3) {
-		fmwrite(0x105, 1);
-	} else {
-		fmwrite(0x105, 0);
-	}
+	/* Enable OPL3 if configured */
+	fmwrite(0x105, fm_opl3);
 } 
 
 static void op_flush(u8 op, struct fm_voice *s)
@@ -191,8 +188,8 @@ static void op_flush(u8 op, struct fm_voice *s)
 		FMSET(SR, COMB(SET.sustain ^ 0xf, SET.release));
 	}
 	if ((CHANGED(level)
-				|| CHANGED(ks_attenuation)
-				|| CHANGED(att))
+			|| CHANGED(ks_attenuation)
+			|| CHANGED(att))
 			&& !SET.accent) {
 		level = SET.level;
 		if (SET.att) {
