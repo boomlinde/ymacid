@@ -152,7 +152,8 @@ The program optionally uses a configuration file, YMACID.CFG. It
 consists of whitespace delineated key and value pairs. For now:
 
 -   port: the address of the OPL port
--   theme: the color theme to use, currently either "data" or "acid"
+-   theme: the color theme to use, currently "data", "acid" or
+    "borland"
 -   opl3: either 1 or 0. Enables OPL3 waveforms and optional splitting.
 -   split: eiter 1 or 0. When set to 1, drums will pass through one
     channel and bass through the other

@@ -39,6 +39,8 @@ static int config_read(const char *data)
 				theme_cur = &theme_acid;
 			} else if (!strcmp(buf, "data")) {
 				theme_cur = &theme_data;
+			} else if (!strcmp(buf, "borland")) {
+				theme_cur = &theme_borland;
 			}
 		} else if (NAME(port)) {
 			NEXT(0);

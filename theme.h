@@ -27,5 +27,6 @@ struct theme {
 extern struct theme *theme_cur;
 extern struct theme theme_data;
 extern struct theme theme_acid;
+extern struct theme theme_borland;
 
 #endif /* _THEME_H_ */
