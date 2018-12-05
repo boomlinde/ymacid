@@ -5,6 +5,14 @@ An OPL2 software groovebox that is suited for live use. It draws
 inspiration from the Roland TB-303 and TR series and features two
 x0x-like sequencers, one for drums and one for bass or lead.
 
+Running
+-------
+
+    YMACID.EXE [save path]
+
+The save path will default to "ymacid.cfg" but can be overridden to
+store multiple setups.
+
 Controls
 --------
 

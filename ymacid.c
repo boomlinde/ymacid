@@ -25,8 +25,8 @@
 #define DRUM_MODE 1
 
 static void set_basspattern(u8 index);
-static void savestate(struct state_t *s);
-static u8 loadstate(struct state_t *s);
+static void savestate(struct state_t *s, const char *filename);
+static u8 loadstate(struct state_t *s, const char *filename);
 static void bassinput(int key);
 static void togglemode(void);
 static void setmode(u8 mode);
@@ -54,8 +54,9 @@ struct state_t {
 static struct bseq_state bseq;
 static struct dseq_state dseq;
 static struct state_t s;
+static const char *default_save = "ymacid.sav";
 
-int main(void)
+int main(int argc, char **argv)
 {
 	static u8 i;
 	static u8 j;
@@ -63,6 +64,7 @@ int main(void)
 	static u8 quit;
 	static u8 loaded;
 	static u8 ps;
+	static const char *savefile;
 
 	keyboard_init();
 
@@ -78,8 +80,13 @@ int main(void)
 	}
 #endif
 
+	if (argc > 1)
+		savefile = argv[1];
+	else
+		savefile = default_save;
+
 	config_load("ymacid.cfg");
-	loaded = loadstate(&s);
+	loaded = loadstate(&s, savefile);
 	if (!loaded) {
 		/* clear state, in case it is partially loaded */
 		memset(&s, 0, sizeof (s));
@@ -309,7 +316,7 @@ int main(void)
 	s.drums.tt_cy.old.pitch = 128.0;
 
 	midi_stop();
-	savestate(&s);
+	savestate(&s, savefile);
 	gfx_reset();
 
 	/* Reset to OPL2 compatibility mode */
@@ -343,11 +350,11 @@ set_basspattern(u8 index)
 }
 
 static void
-savestate(struct state_t *s)
+savestate(struct state_t *s, const char *filename)
 {
 	FILE *fp;
 
-	fp = fopen("ymacid.sav", "wb");
+	fp = fopen(filename, "wb");
 	if (!fp) return;
 
 	fwrite(s, sizeof (*s), 1, fp);
@@ -355,12 +362,12 @@ savestate(struct state_t *s)
 }
 
 static u8
-loadstate(struct state_t *s)
+loadstate(struct state_t *s, const char *filename)
 {
 	static size_t n;
 	FILE *fp;
 
-	fp = fopen("ymacid.sav", "rb");
+	fp = fopen(filename, "rb");
 	if (fp == 0) return 0;
 
 	/*
