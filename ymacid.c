@@ -541,6 +541,7 @@ druminput(int key)
 		drump_clearcursor(PAT);
 		memcpy(PAT, &s.dcopybuf, sizeof (s.dcopybuf));
 		drump_editordraw(PAT);
+		drump_setmute(&s.mutes);
 		break;
 
 	case '+': if (s.shuffle < 16) s.shuffle++; break;
