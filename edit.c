@@ -2,6 +2,7 @@
 #include "gfx.h"
 #include "fm.h"
 #include "theme.h"
+#include "mouse.h"
 
 static char *hlb;
 static char *hld;
@@ -13,13 +14,50 @@ static u8 vy;
 
 static u8 col1;
 static u8 col2;
+static u8 mouse_max;
+static i16 mouse_state;
+
+void edit_updatemouse(struct fm_voice *fm)
+{
+	static i16 x;
+	static i16 new;
+	if (!mouse_enabled) return;
+	if (!hlb) return;
+
+	x = 0;
+	mouse_motion(0, &x);
+	mouse_state -= x << 1;
+
+	new = mouse_state >> 8;
+
+	if (new < 0) {
+		new = 0;
+		mouse_state = 0;
+	} else if (new > mouse_max) {
+		new = mouse_max;
+		mouse_state = new << 8;
+	}
+
+	if (new != *hlb) {
+		*hlb = new;
+		if (hlp == &hlb) edit_drawsynth(fm, 0);
+	}
+}
 
 static void control(int key, char *name, u8 max, u8 *v)
 {
 	static u8 colors;
 	static i16 value;
 
-	if (k == key) *hlp = v;
+	if (k == key) {
+		*hlp = v;
+
+		/* handle mouse only for bassline */
+		if (hlp == &hlb) {
+			mouse_max = max;
+			mouse_state = (i16)*v << 8;
+		}
+	}
 
 	value = *v;
 
@@ -32,6 +70,11 @@ static void control(int key, char *name, u8 max, u8 *v)
 
 		if (value < 0) value = 0;
 		else if (value > max) value = max;
+
+		/* Update mouse state if bassline control */
+		if (*v != value && hlp == &hlb) {
+			mouse_state = (i16)*v << 8;
+		}
 
 		*v = value;
 	} else {
@@ -73,7 +116,11 @@ void edit_drawsynth(struct fm_voice *fm, int key)
 	k = key;
 	setorigin(2, 21);
 
-	if (hlb == 0) hlb = MOD.level;
+	if (hlb == 0) {
+		hlb = MOD.level;
+		mouse_max = 0x3f;
+		mouse_state = (u16)*(MOD.level) << 8;
+	}
 
 	control('z', "ML",            0x3f, MOD.level);
 	control('x', "MD",             0xf, MOD.decay);

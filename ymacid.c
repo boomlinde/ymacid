@@ -16,6 +16,7 @@
 #include "theme.h"
 #include "cfg.h"
 #include "midi.h"
+#include "mouse.h"
 
 #if 0
 #define KBTEST
@@ -93,11 +94,16 @@ int main(int argc, char **argv)
 	}
 
 	/* Init */
+	if (mouse_init()) {
+		puts("Mouse driver not loaded");
+		return 1;
+	}
 	gfx_init();
 	srand(time(0));
 	tick_init();
 	midi_init();
 	fm_init();
+
 	bseq_init(&bseq, &s.bass,
 			&s.baspat[s.bpat], &s.tune, &s.shuffle, &s.doshuffle);
 	dseq_init(&dseq, &s.drums, &s.drumpat[s.dpat], &s.mutes, &s.shuffle);
@@ -221,7 +227,6 @@ int main(int argc, char **argv)
 	bass_drawpatname(s.bpat);
 	gfx_plotstrf(14, 1, "tempo:%d  ", theme_cur->bass_dc, s.tempo);
 	gfx_plotstrf(27, 1, "tune:%d  ", theme_cur->bass_dc, s.tune);
-	edit_drawsynth(&s.bass, 0);
 	gfx_setpage(1);
 	gfx_cls(theme_cur->drum_dc);
 	drump_editordraw(&s.drumpat[s.dpat]);
@@ -230,7 +235,14 @@ int main(int argc, char **argv)
 	gfx_plotstrf(14, 1, "tempo:%d  ", theme_cur->drum_dc, s.tempo);
 	gfx_plotstrf(25, 1, "shuffle:%d  ", theme_cur->drum_dc, s.shuffle - 12);
 	edit_drawdrums(&s.drums, 0);
+	gfx_setpage(0);
+	edit_drawsynth(&s.bass, 0);
+
 	setmode(s.mode);
+	switch (s.mode) {
+	case BASS_MODE: edit_drawsynth(&s.bass, 0); break;
+	case DRUM_MODE: edit_drawdrums(&s.drums, 0); break;
+	}
 
 	while (!quit) {
 		if (tick()) {
@@ -257,6 +269,8 @@ int main(int argc, char **argv)
 			dseq_tick(&dseq);
 		}
 
+		edit_updatemouse(&s.bass);
+
 		key = keyboard_poll();
 		if (!key) continue;
 
@@ -264,6 +278,7 @@ int main(int argc, char **argv)
 		case 0x11: quit = 1; break; /* ctrl+q */
 		case '\t': togglemode(); break;
 		case '\r':
+			fm_flush(&s.bass);
 			bseq_startstop(&bseq);
 			dseq_startstop(&dseq);
 			midi_startstop();
@@ -562,8 +577,12 @@ druminput(int key)
 
 static void togglemode(void)
 {
-	if (s.mode == BASS_MODE) setmode(DRUM_MODE);
-	else setmode(BASS_MODE);
+	if (s.mode == BASS_MODE) {
+		setmode(DRUM_MODE);
+	} else {
+		setmode(BASS_MODE);
+		edit_drawsynth(&s.bass, 0);
+	}
 }
 static void setmode(u8 mode)
 {

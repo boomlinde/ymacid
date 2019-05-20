@@ -1,21 +1,15 @@
-ymacid.exe: ymacid.obj gfx.obj bp.obj kb.obj tc.obj fm.obj bs.obj ed.obj dp.obj ds.obj th.obj cfg.obj mi.obj
+ymacid.exe: ymacid.obj gfx.obj bp.obj kb.obj tc.obj fm.obj bs.obj ed.obj dp.obj ds.obj th.obj cf.obj mi.obj mo.obj
 	tcc -oymacid.exe \
-		ymacid.obj \
-		gfx.obj \
-		bp.obj \
-		kb.obj \
-		tc.obj \
-		fm.obj \
-		bs.obj \
-		ed.obj \
-		dp.obj \
-		ds.obj \
-		th.obj \
-		cfg.obj \
-		mi.obj
+		ymacid.obj gfx.obj \
+		bp.obj kb.obj \
+		tc.obj fm.obj \
+		bs.obj ed.obj \
+		dp.obj ds.obj \
+		th.obj cf.obj \
+		mi.obj mo.obj
 
 ymacid.obj: ymacid.c gfx.h types.h pattern.h
-	tcc -c ymacid.c
+	tcc -oymacid.obj -c ymacid.c
 
 gfx.obj: gfx.c gfx.h types.h
 	tcc -c gfx.c
@@ -47,8 +41,11 @@ ds.obj: drum_seq.c drum_seq.h types.h
 th.obj: theme.c theme.h types.h
 	tcc -oth.obj -c theme.c
 
-cfg.obj: cfg.c cfg.h types.h theme.h fm.h
-	tcc -ocfg.obj -c cfg.c
+cf.obj: cfg.c cfg.h types.h theme.h fm.h
+	tcc -ocf.obj -c cfg.c
 
 mi.obj: midi.c midi.h types.h tick.h
 	tcc -omi.obj -c midi.c
+
+mo.obj: mouse.c mouse.h types.h
+	tcc -omo.obj -c mouse.c

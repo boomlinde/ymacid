@@ -9,6 +9,7 @@
 #include "theme.h"
 #include "tick.h"
 #include "midi.h"
+#include "mouse.h"
 
 static int config_next(const char **p, char *out)
 {
@@ -61,6 +62,9 @@ static int config_read(const char *data)
 		} else if (NAME(midi)) {
 			NEXT(0);
 			midi_port = strtol(buf, 0, 0);
+		} else if (NAME(mouse)) {
+			NEXT(0);
+			mouse_enabled = strtol(buf, 0, 0);
 		}
 	}
 #undef NAME

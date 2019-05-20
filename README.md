@@ -162,9 +162,12 @@ consists of whitespace delineated key and value pairs. For now:
     DOSBox. "int" mode uses interrupt 0x15, function 0x8300 to setup
     delayed events at microsecond intervals. This works in DOSBox but is
     less accurate. "int" accuracy may depend on the motherboard chipset.
--	midi: 0, or the port of the MPU-401 compatible device. Only UART
+-   midi: 0, or the port of the MPU-401 compatible device. Only UART
     mode is needed. 0 means no MIDI, and setting the port will send
-	start/stop/clock messages on the MIDI output.
+    start/stop/clock messages on the MIDI output.
+-   mouse: 0 or 1. Enables mouse control of the currently selected bass
+    synth parameter, regardless of whether the bass synth page is
+    active.
 
 Example configuration:
 
@@ -173,7 +176,8 @@ Example configuration:
     opl3 0
     split 0
     clock pit
-	midi 0
+    midi 0
+    mouse 0
 
 That is also the default configuration if there is no configuration
 file.
