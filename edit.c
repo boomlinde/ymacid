@@ -73,7 +73,7 @@ static void control(int key, char *name, u8 max, u8 *v)
 
 		/* Update mouse state if bassline control */
 		if (*v != value && hlp == &hlb) {
-			mouse_state = (i16)*v << 8;
+			mouse_state = (i16)value << 8;
 		}
 
 		*v = value;
