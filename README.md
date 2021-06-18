@@ -10,7 +10,7 @@ Running
 
     YMACID.EXE [save path]
 
-The save path will default to "ymacid.cfg" but can be overridden to
+The save path will default to "ymacid.sav" but can be overridden to
 store multiple setups.
 
 Controls

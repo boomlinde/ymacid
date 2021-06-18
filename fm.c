@@ -60,7 +60,7 @@ midi2fnum(float note)
 	 * pow(2, 1/12/100) == 1.0005777895065548
 	 * pow(2, x/12/100) == pow(1.0005777895065548, x)
 	 * pow(2, x/12) == pow(1.0005777895065548, x*100)
-	 * 
+	 *
 	 * Also, 440 has been replaced and the -69 root note offset removed
 	 *
 	 * let b = 1.0005777895065548 (the 1-cent base)
@@ -169,7 +169,7 @@ void fm_init(void)
 
 	/* Enable OPL3 if configured */
 	fmwrite(0x105, fm_opl3);
-} 
+}
 
 static void op_flush(u8 op, struct fm_voice *s)
 {

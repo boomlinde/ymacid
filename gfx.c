@@ -53,7 +53,7 @@ void
 gfx_plot(int x, int y, u8 ch, u8 col)
 {
 	static int offset;
-	
+
 	offset = (y << 6) + (y << 4) + (x << 1) + pageoffset;
 	pokeb(VIDEO_BASE, offset, ch);
 	pokeb(VIDEO_BASE, offset + 1, col);
